@@ -1,0 +1,52 @@
+{
+    "short_name": "CoderDojo RPG Game",
+    "name": "CoderDojo RPG TypeScript Game",
+    "description": "Application made in TypeScript with webpack. PWA enabled.",
+    "icons": [
+        {
+            "src": "./icons/icons-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any"
+        },
+        {
+            "src": "./icons/icons-512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any"
+        },
+        {
+            "src": "./icons/icons-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        },
+        {
+            "src": "./icons/icons-512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable"
+        }
+    ],
+    "start_url": "./index.html",
+    "background_color": "#008080",
+    "display": "standalone",
+    "orientation": "landscape",
+    "scope": "./",
+    "theme_color": "#008080",
+    "capture_links": "new-client",
+    "prefer_related_applications": true,
+    "related_applications": [
+        {
+            "platform": "webapp",
+            "id": "com.coderdojo.rpg",
+            "url": "http://localhost:8000/manifest.json"
+        }
+    ],
+    "protocol_handlers": [
+        {
+            "protocol": "coderdojo",
+            "url": "/index.html"
+        }
+    ]
+}
