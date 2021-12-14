@@ -1,27 +1,24 @@
 import 'phaser';
-
-declare var game: Phaser.Game;
-declare var beforeinstallevent: any;
-declare function runningStandalone(): boolean;
+import Hero from '../hero';
 
 export default class MainMenuScene extends Phaser.Scene {
-    fpsText: Phaser.GameObjects.Text;
-    logo1: Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
-
     constructor() {
         super({ key: 'MainMenuScene' });
     }
 
     preload() {
-        this.load.image('phaser-logo', 'assets/demoGame/phaser-logo.png');
-        this.load.image('logo1', 'assets/demoGame/coder-1.png');
-        this.load.image('logo2', 'assets/demoGame/coder-2.png');
-        this.load.image('phaser', 'assets/demoGame/phaser-dude.png');
-        this.load.image('fps', 'assets/demoGame/fps.png');
-        this.load.image('learn-more', 'assets/demoGame/phaser-learn-more.png');
+        this.load.image('tiles', 'assets/tilesets/ground-tileset.png');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/town.json');
 
-        this.load.spritesheet('dude-spritesheet', 'assets/demoGame/phaser-dude-spritesheet.png', { frameWidth: 256, frameHeight: 256 });
-        this.load.spritesheet('cat-spritesheet', 'assets/demoGame/cat-spritesheet.png', { frameWidth: 500, frameHeight: 400 });
+        this.load.spritesheet('hero-idle-aggro-E-spritesheet', 'assets/hero/idle_aggro_E.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-idle-aggro-N-spritesheet', 'assets/hero/idle_aggro_N.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-idle-aggro-S-spritesheet', 'assets/hero/idle_aggro_S.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-walk-aggro-E-spritesheet', 'assets/hero/walk_aggro_E.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-walk-aggro-N-spritesheet', 'assets/hero/walk_aggro_N.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-walk-aggro-S-spritesheet', 'assets/hero/walk_aggro_S.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-atk-heavy-E-spritesheet', 'assets/hero/atk_heavy_E.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-atk-heavy-N-spritesheet', 'assets/hero/atk_heavy_N.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('hero-atk-heavy-S-spritesheet', 'assets/hero/atk_heavy_S.png', { frameWidth: 128, frameHeight: 128 });
     }
 
     create() {
@@ -41,82 +38,42 @@ export default class MainMenuScene extends Phaser.Scene {
         this.cameras.main.fadeIn(2000);
         this.cameras.main.setBackgroundColor('#008080');
 
-        const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
-        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+        let map = this.make.tilemap({ key: 'map' });
 
-        this.logo1 = this.physics.add.image(screenCenterX, 250, 'logo1');
-        this.logo1.setOrigin(0.5, 0.5);
-        this.logo1.setScale(0.3);
-        this.logo1.body.setAllowGravity(false);
+        // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
+        // Phaser's cache (i.e. the name you used in preload)
+        let tileset = map.addTilesetImage('ground', 'tiles', 32, 32, 1, 2);
 
-        const logo2 = this.add.sprite(screenCenterX, 250, 'logo2');
-        logo2.setScale(0.3);
+        // Parameters: layer name (or index) from Tiled, tileset, x, y
+        const belowLayer = map.createLayer('Below hero', tileset, 0, 0);
+        const objectsBelowLayer = map.createLayer('Objects below hero', tileset, 0, 0);
+        const worldLayer = map.createLayer('World', tileset, 0, 0);
+        const aboveLayer = map.createLayer('Above hero', tileset, 0, 0);
 
-        var tween = this.tweens.add({
-            targets: this.logo1,
-            angle: 360.0,
-            duration: 8500,
-            repeat: -1
-        });
+        worldLayer.setCollisionBetween(tileset.firstgid, tileset.firstgid + tileset.total, true);
 
-        let learnMoreImg = this.add.image(screenCenterX, 360, 'learn-more');
-        learnMoreImg.setOrigin(0.5, 0);
-        learnMoreImg.setScale(0.85);
+        // By default, everything gets depth sorted on the screen in the order we created things. Here, we
+        // want the "Above this.hero" layer to sit on top of the this.hero, so we explicitly give it a depth.
+        // Higher depths will sit on top of lower depth objects.
+        aboveLayer.setDepth(10);
 
-        var txt = this.add.text(screenCenterX, 90, 'Bine ati venit la atelierele CoderDojo!');
-        txt.setOrigin(0.5, 1);
-        txt.setColor('#c0c0c0');
-        txt.setFontFamily('VT323');
-        txt.setFontSize(60);
+        // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
+        // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
+        const spawnPoint = map.findObject('Objects', (obj) => obj.name === 'Spawn Point');
 
-        var txt = this.add.text(screenCenterX, 120, '- Phaser 3 în TypeSript -');
-        txt.setOrigin(0.5, 1);
-        txt.setColor('#ffffff');
-        txt.setFontFamily('VT323');
-        txt.setFontSize(40);
+        let hero = new Hero(this, spawnPoint.x as number, spawnPoint.y as number);
 
-        // display the Phaser.VERSION
-        let dude = this.physics.add.image(this.cameras.main.width - 265, 40, 'phaser');
-        dude.setOrigin(1, 0.5);
+        // Watch the this.hero and worldLayer for collisions, for the duration of the scene:
+        this.physics.add.collider(hero, worldLayer);
 
-        this.add
-            .text(this.cameras.main.width - 15, 40, `Phaser v${Phaser.VERSION}`, {
-                color: '#f0f0f0',
-                fontSize: '40px',
-                // fontStyle: 'bold',
-                fontFamily: 'VT323'
-            })
-            .setOrigin(1, 0.5);
+        this.physics.world.setBoundsCollision(true, true, true, true);
 
-        let fps = this.physics.add.image(15, 40, 'fps');
-        fps.setOrigin(0, 0.5);
-
-        this.fpsText = this.add.text(90, 40, '', {
-            color: '#f0f0f0',
-            fontSize: '40px',
-            // fontStyle: 'bold',
-            fontFamily: 'VT323'
-        });
-        this.fpsText.setOrigin(0, 0.5);
-
-        this.anims.create({
-            key: 'dude-anim',
-            frames: this.anims.generateFrameNumbers('dude-spritesheet', {}),
-            frameRate: 7,
-            repeat: -1
-        });
-        this.add.sprite(400, 380, 'phaser').play('dude-anim');
-
-        this.anims.create({
-            key: 'cat-anim',
-            frames: this.anims.generateFrameNumbers('cat-spritesheet', {}),
-            frameRate: 7,
-            repeat: -1
-        });
-        this.add.sprite(1600, 400, 'phaser').play('cat-anim');
+        const camera = this.cameras.main;
+        camera.startFollow(hero);
+        camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        (hero.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
     }
 
-    update(time, delta) {
-        this.fpsText.setText(`fps: ${Math.floor(this.game.loop.actualFps)}`);
-    }
+    update(time, delta) {}
 }
