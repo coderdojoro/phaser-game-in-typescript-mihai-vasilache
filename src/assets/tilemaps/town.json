@@ -9,7 +9,7 @@
          "name":"Below hero",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":64,
          "x":0,
          "y":0
@@ -21,7 +21,7 @@
          "name":"Objects below hero",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":64,
          "x":0,
          "y":0
@@ -66,6 +66,66 @@
                  "width":0,
                  "x":354.54545454545,
                  "y":1221.69696969697
+                }, 
+                {
+                 "height":0,
+                 "id":282,
+                 "name":"grizzly",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":308,
+                 "y":620
+                }, 
+                {
+                 "height":0,
+                 "id":283,
+                 "name":"grizzly",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":210.666666666667,
+                 "y":618.666666666667
+                }, 
+                {
+                 "height":0,
+                 "id":284,
+                 "name":"grizzly",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":612,
+                 "y":897.333333333333
+                }, 
+                {
+                 "height":0,
+                 "id":285,
+                 "name":"grizzly",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":617.333333333333,
+                 "y":938.666666666667
+                }, 
+                {
+                 "height":0,
+                 "id":286,
+                 "name":"grizzly",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":620,
+                 "y":988
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -74,7 +134,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":282,
+ "nextobjectid":287,
  "orientation":"orthogonal",
  "properties":[
         {
