@@ -9,7 +9,7 @@
          "name":"Below hero",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":64,
          "x":0,
          "y":0
@@ -21,7 +21,7 @@
          "name":"Objects below hero",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":64,
          "x":0,
          "y":0
@@ -143,7 +143,7 @@
          "value":"clamped"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.7.2",
+ "tiledversion":"1.8.1",
  "tileheight":32,
  "tilesets":[
         {
@@ -10756,6 +10756,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":"1.6",
+ "version":"1.8",
  "width":64
 }

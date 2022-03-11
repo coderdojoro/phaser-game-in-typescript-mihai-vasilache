@@ -1,25 +1,17 @@
 import 'phaser';
+import Grizzly from './grizzly';
 
+enum HeroPosition {
+    WEST,
+    EAST,
+    NORTH,
+    SOUTH
+}
 enum HeroState {
-    IDLE_SOUTH,
-    IDLE_NORTH,
-    IDLE_EAST,
-    IDLE_WEST,
-
-    WALK_SOUTH,
-    WALK_NORTH,
-    WALK_EAST,
-    WALK_WEST,
-
-    ATK_SOUTH,
-    ATK_NORTH,
-    ATK_EAST,
-    ATK_WEST,
-
-    DEAD_SOUTH,
-    DEAD_NORTH,
-    DEAD_EAST,
-    DEAD_WEST
+    IDLE,
+    WALK,
+    ATTACK,
+    DEAD
 }
 
 export default class Hero extends Phaser.GameObjects.Sprite {
@@ -29,91 +21,87 @@ export default class Hero extends Phaser.GameObjects.Sprite {
     keyDown: Phaser.Input.Keyboard.Key;
     keyFire: Phaser.Input.Keyboard.Key;
 
-    heroState: HeroState = HeroState.IDLE_SOUTH;
+    heroState: HeroState = HeroState.IDLE;
+    heroPosition: HeroPosition = HeroPosition.EAST;
 
     constructor(scene, x, y) {
-        super(scene, x, y, 'hero-walk-aggro-S-spritesheet', 0);
+        super(scene, x, y, 'hero-walk-S-spritesheet', 0);
 
         this.anims.create({
-            key: 'hero-idle-aggro-E-anim',
-            frames: this.anims.generateFrameNumbers('hero-idle-aggro-E-spritesheet', {}),
+            key: 'hero-idle-e-anim',
+            frames: this.anims.generateFrameNumbers('hero-idle-e-spritesheet', {}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'hero-walk-e-anim',
+            frames: this.anims.generateFrameNumbers('hero-walk-e-spritesheet', {}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'hero-walk-s-anim',
+            frames: this.anims.generateFrameNumbers('hero-walk-s-spritesheet', {}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'hero-idle-s-anim',
+            frames: this.anims.generateFrameNumbers('hero-idle-s-spritesheet', {}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'hero-idle-n-anim',
+            frames: this.anims.generateFrameNumbers('hero-idle-n-spritesheet', {}),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'hero-walk-n-anim',
+            frames: this.anims.generateFrameNumbers('hero-walk-n-spritesheet', {}),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'hero-idle-aggro-N-anim',
-            frames: this.anims.generateFrameNumbers('hero-idle-aggro-N-spritesheet', {}),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'hero-idle-aggro-S-anim',
-            frames: this.anims.generateFrameNumbers('hero-idle-aggro-S-spritesheet', {}),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'hero-walk-aggro-E-anim',
-            frames: this.anims.generateFrameNumbers('hero-walk-aggro-E-spritesheet', {}),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'hero-walk-aggro-N-anim',
-            frames: this.anims.generateFrameNumbers('hero-walk-aggro-N-spritesheet', {}),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'hero-walk-aggro-S-anim',
-            frames: this.anims.generateFrameNumbers('hero-walk-aggro-S-spritesheet', {}),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'hero-atk-heavy-E-anim',
-            frames: this.anims.generateFrameNumbers('hero-atk-heavy-E-spritesheet', {}),
+            key: 'hero-atk-E-anim',
+            frames: this.anims.generateFrameNumbers('hero-atk-E-spritesheet', {}),
             frameRate: 10,
             repeat: 0
         });
 
         this.anims.create({
-            key: 'hero-atk-heavy-N-anim',
-            frames: this.anims.generateFrameNumbers('hero-atk-heavy-N-spritesheet', {}),
+            key: 'hero-atk-N-anim',
+            frames: this.anims.generateFrameNumbers('hero-atk-N-spritesheet', {}),
             frameRate: 10,
             repeat: 0
         });
 
         this.anims.create({
-            key: 'hero-atk-heavy-S-anim',
-            frames: this.anims.generateFrameNumbers('hero-atk-heavy-S-spritesheet', {}),
+            key: 'hero-atk-S-anim',
+            frames: this.anims.generateFrameNumbers('hero-atk-S-spritesheet', {}),
             frameRate: 10,
             repeat: 0
         });
 
         this.anims.create({
-            key: 'hitdead-E-anim',
-            frames: this.anims.generateFrameNumbers('hitdead-E-spritesheet', {}),
+            key: 'hero-hitdead-E-anim',
+            frames: this.anims.generateFrameNumbers('hero-hitdead-E-spritesheet', {}),
             frameRate: 5,
             repeat: 0
         });
 
         this.anims.create({
-            key: 'hitdead-N-anim',
-            frames: this.anims.generateFrameNumbers('hitdead-N-spritesheet', {}),
+            key: 'hero-hitdead-N-anim',
+            frames: this.anims.generateFrameNumbers('hero-hitdead-N-spritesheet', {}),
             frameRate: 5,
             repeat: 0
         });
 
         this.anims.create({
-            key: 'hitdead-S-anim',
-            frames: this.anims.generateFrameNumbers('hitdead-S-spritesheet', {}),
+            key: 'hero-hitdead-S-anim',
+            frames: this.anims.generateFrameNumbers('hero-hitdead-S-spritesheet', {}),
             frameRate: 5,
             repeat: 0
         });
@@ -134,130 +122,116 @@ export default class Hero extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+        (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
 
-        if (HeroState[this.heroState].startsWith('DEAD_')) {
+        if (this.heroState == HeroState.DEAD) {
             (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
             return;
         }
 
-        if (this.keyFire.isDown) {
+        if (this.keyFire.isDown && this.heroState != HeroState.ATTACK) {
             (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
-        }
-
-        if (
-            this.keyFire.isDown &&
-            (this.heroState == HeroState.WALK_EAST || this.heroState == HeroState.IDLE_EAST || this.heroState == HeroState.WALK_WEST || this.heroState == HeroState.IDLE_WEST) &&
-            !HeroState[this.heroState].startsWith('ATK_')
-        ) {
-            this.anims.play('hero-atk-heavy-E-anim');
-            this.heroState = HeroState.ATK_EAST;
+            let cardinalPosition = HeroPosition[this.heroPosition].charAt(0);
+            if (cardinalPosition == 'W') {
+                cardinalPosition = 'E';
+            }
+            this.anims.play('hero-atk-' + cardinalPosition + '-anim');
+            this.heroState = HeroState.ATTACK;
             this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.heroState = HeroState.IDLE_EAST;
-                this.anims.play('hero-idle-aggro-E-anim');
+                this.heroState = HeroState.IDLE;
+                this.anims.play('hero-idle-' + cardinalPosition + '-anim');
             });
         }
 
-        if (this.keyFire.isDown && (this.heroState == HeroState.WALK_NORTH || this.heroState == HeroState.IDLE_NORTH) && !HeroState[this.heroState].startsWith('ATK_')) {
-            this.anims.play('hero-atk-heavy-N-anim');
-            this.heroState = HeroState.ATK_NORTH;
-            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.heroState = HeroState.IDLE_NORTH;
-                this.anims.play('hero-idle-aggro-N-anim');
-            });
+        //kill enemies
+        if (this.heroState == HeroState.ATTACK) {
+            let enemies;
+            if (this.flipX) {
+                enemies = this.scene.physics.overlapRect((this.body as Phaser.Physics.Arcade.Body).left - 50, (this.body as Phaser.Physics.Arcade.Body).top - 20, 50, 70);
+            } else {
+                enemies = this.scene.physics.overlapRect((this.body as Phaser.Physics.Arcade.Body).right, (this.body as Phaser.Physics.Arcade.Body).top - 20, 50, 70);
+            }
+
+            for (let obj of enemies) {
+                if (obj.gameObject instanceof Grizzly) {
+                    obj.gameObject.kill();
+                }
+            }
         }
 
-        if (this.keyFire.isDown && (this.heroState == HeroState.WALK_SOUTH || this.heroState == HeroState.IDLE_SOUTH) && !HeroState[this.heroState].startsWith('ATK_')) {
-            this.anims.play('hero-atk-heavy-S-anim');
-            this.heroState = HeroState.ATK_SOUTH;
-            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-                this.heroState = HeroState.IDLE_SOUTH;
-                this.anims.play('hero-idle-aggro-S-anim');
-            });
-        }
-
-        if (HeroState[this.heroState].startsWith('ATK_')) {
+        if (this.heroState == HeroState.ATTACK) {
             return;
         }
 
         // Update the animation last and give left/right animations precedence over up/down animations
-        let speed = 175;
-        if (this.keyLeft.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityX(-speed);
-            this.setFlipX(true);
-            this.heroState = HeroState.WALK_WEST;
-        }
         if (this.keyRight.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityX(speed);
+            (this.body as Phaser.Physics.Arcade.Body).setVelocityX(175);
             this.setFlipX(false);
-            this.heroState = HeroState.WALK_EAST;
+            this.heroState = HeroState.WALK;
+            this.heroPosition = HeroPosition.WEST;
+        }
+
+        if (this.keyLeft.isDown) {
+            (this.body as Phaser.Physics.Arcade.Body).setVelocityX(-175);
+            this.setFlipX(true);
+            this.heroState = HeroState.WALK;
+            this.heroPosition = HeroPosition.EAST;
+        }
+
+        if (this.keyDown.isDown) {
+            (this.body as Phaser.Physics.Arcade.Body).setVelocityY(175);
+            this.heroState = HeroState.WALK;
+            this.heroPosition = HeroPosition.SOUTH;
         }
         if (this.keyUp.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-speed);
-            this.heroState = HeroState.WALK_NORTH;
-        }
-        if (this.keyDown.isDown) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocityY(speed);
-            this.heroState = HeroState.WALK_SOUTH;
+            (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-175);
+            this.heroState = HeroState.WALK;
+            this.heroPosition = HeroPosition.NORTH;
         }
 
         //hero is idle
-        if (this.keyLeft.isUp && this.keyRight.isUp && this.keyDown.isUp && this.keyUp.isUp) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
-            if (this.heroState == HeroState.WALK_NORTH) {
-                this.heroState = HeroState.IDLE_NORTH;
-            } else if (this.heroState == HeroState.WALK_SOUTH) {
-                this.heroState = HeroState.IDLE_SOUTH;
-            } else if (this.heroState == HeroState.WALK_EAST) {
-                this.heroState = HeroState.IDLE_EAST;
-            } else if (this.heroState == HeroState.WALK_WEST) {
-                this.heroState = HeroState.IDLE_WEST;
-            }
+        if (this.keyRight.isUp && this.keyLeft.isUp && this.keyDown.isUp && this.keyUp.isUp) {
+            this.heroState = HeroState.IDLE;
         }
 
         //animations
-        if (this.heroState == HeroState.IDLE_EAST || this.heroState == HeroState.IDLE_WEST) {
-            this.anims.play('hero-idle-aggro-E-anim', true);
+        if (this.heroState == HeroState.IDLE) {
+            if (this.heroPosition == HeroPosition.WEST || this.heroPosition == HeroPosition.EAST) {
+                this.anims.play('hero-idle-e-anim', true);
+            }
+            if (this.heroPosition == HeroPosition.SOUTH) {
+                this.anims.play('hero-idle-s-anim', true);
+            }
+            if (this.heroPosition == HeroPosition.NORTH) {
+                this.anims.play('hero-idle-n-anim', true);
+            }
         }
-        if (this.heroState == HeroState.IDLE_NORTH) {
-            this.anims.play('hero-idle-aggro-N-anim', true);
-        }
-        if (this.heroState == HeroState.IDLE_SOUTH) {
-            this.anims.play('hero-idle-aggro-S-anim', true);
-        }
-
-        if (this.heroState == HeroState.WALK_WEST || this.heroState == HeroState.WALK_EAST) {
-            this.anims.play('hero-walk-aggro-E-anim', true);
-        }
-        if (this.heroState == HeroState.WALK_NORTH) {
-            this.anims.play('hero-walk-aggro-N-anim', true);
-        }
-        if (this.heroState == HeroState.WALK_SOUTH) {
-            this.anims.play('hero-walk-aggro-S-anim', true);
+        if (this.heroState == HeroState.WALK) {
+            if (this.heroPosition == HeroPosition.WEST || this.heroPosition == HeroPosition.EAST) {
+                this.anims.play('hero-walk-e-anim', true);
+            }
+            if (this.heroPosition == HeroPosition.SOUTH) {
+                this.anims.play('hero-walk-s-anim', true);
+            }
+            if (this.heroPosition == HeroPosition.NORTH) {
+                this.anims.play('hero-walk-n-anim', true);
+            }
         }
 
         // Normalize and scale the velocity so that this.hero can't move faster along a diagonal
-        (this.body as Phaser.Physics.Arcade.Body).velocity.normalize().scale(speed);
+        (this.body as Phaser.Physics.Arcade.Body).velocity.normalize().scale(175);
     }
 
     die() {
-        if (HeroState[this.heroState].startsWith('DEAD_')) {
+        if (this.heroState == HeroState.DEAD) {
             return;
         }
-        if (HeroState[this.heroState].includes('SOUTH')) {
-            this.heroState = HeroState.DEAD_SOUTH;
-            this.anims.play('hitdead-S-anim', true);
+
+        let cardinalPosition = HeroPosition[this.heroPosition].charAt(0);
+        if (cardinalPosition == 'W') {
+            cardinalPosition = 'E';
         }
-        if (HeroState[this.heroState].includes('NORTH')) {
-            this.heroState = HeroState.DEAD_NORTH;
-            this.anims.play('hitdead-N-anim', true);
-        }
-        if (HeroState[this.heroState].includes('EAST')) {
-            this.heroState = HeroState.DEAD_EAST;
-            this.anims.play('hitdead-E-anim', true);
-        }
-        if (HeroState[this.heroState].includes('WEST')) {
-            this.heroState = HeroState.DEAD_WEST;
-            this.anims.play('hitdead-E-anim', true);
-        }
+        this.heroState = HeroState.DEAD;
+        this.anims.play('hero-hitdead-' + cardinalPosition + '-anim', true);
     }
 }

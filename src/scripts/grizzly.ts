@@ -152,4 +152,6 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             }
         }
     }
+
+    kill() {}
 }

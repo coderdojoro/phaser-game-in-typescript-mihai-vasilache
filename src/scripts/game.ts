@@ -21,7 +21,7 @@ export const phaserConfiguration = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: false,
+            debug: true,
             debugShowVelocity: true,
             debugShowBody: true,
             debugShowStaticBody: true
