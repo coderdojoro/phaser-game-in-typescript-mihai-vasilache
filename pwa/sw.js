@@ -63,8 +63,8 @@ self.addEventListener('activate', (evt) => {
 });
 
 self.addEventListener('fetch', (evt) => {
-    console.log(' fetch...');
-    console.log('activate...');
+    // console.log(' fetch...');
+    // console.log('activate...');
     self.caches.delete('workbox-precache-v2-http://localhost:8000/');
 
     // self.caches.keys().then((keys) => {

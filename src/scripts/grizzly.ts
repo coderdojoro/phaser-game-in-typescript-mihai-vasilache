@@ -5,7 +5,9 @@ import MainMenuScene from './scenes/mainMenuScene';
 
 enum State {
     IDLE,
-    FOLLOW
+    FOLLOW,
+    FREEZE,
+    DEAD
 }
 
 export default class Grizzly extends Phaser.GameObjects.Sprite {
@@ -14,11 +16,15 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
     easystar: EasyStar.js;
     target?: Phaser.Math.Vector2;
 
+    heroCollider: Phaser.Physics.Arcade.Collider;
+
     constructor(scene, x, y) {
         super(scene, x, y, 'grizzly-idle-spritesheet', 0);
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
+        (this.body as Phaser.Physics.Arcade.Body).setSize(20, 31);
+        (this.body as Phaser.Physics.Arcade.Body).setOffset(6, 1);
 
         this.anims.create({
             key: 'grizzly-idle-anim',
@@ -28,22 +34,22 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         });
 
         this.anims.create({
-            key: 'grizzly-walk-N-anim',
-            frames: this.anims.generateFrameNumbers('grizzly-walk-N-spritesheet', {}),
+            key: 'grizzly-walk-n-anim',
+            frames: this.anims.generateFrameNumbers('grizzly-walk-n-spritesheet', {}),
             frameRate: 5,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'grizzly-walk-S-anim',
-            frames: this.anims.generateFrameNumbers('grizzly-walk-S-spritesheet', {}),
+            key: 'grizzly-walk-s-anim',
+            frames: this.anims.generateFrameNumbers('grizzly-walk-s-spritesheet', {}),
             frameRate: 5,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'grizzly-walk-W-anim',
-            frames: this.anims.generateFrameNumbers('grizzly-walk-W-spritesheet', {}),
+            key: 'grizzly-walk-e-anim',
+            frames: this.anims.generateFrameNumbers('grizzly-walk-e-spritesheet', {}),
             frameRate: 5,
             repeat: -1
         });
@@ -55,11 +61,11 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             repeat: 0
         });
 
-        this.scene.physics.add.overlap(
+        this.heroCollider = this.scene.physics.world.addOverlap(
             (this.scene as MainMenuScene).hero,
             this,
             () => {
-                (this.scene as MainMenuScene).hero.die();
+                (this.scene as MainMenuScene).hero.kill();
             },
             undefined,
             this
@@ -74,6 +80,10 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
+
+        if (this.enemyState == State.DEAD || this.enemyState == State.FREEZE) {
+            return;
+        }
 
         let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, (this.scene as MainMenuScene).hero.x, (this.scene as MainMenuScene).hero.y);
         if (distanceFromPlayer <= 300 && !this.target) {
@@ -140,18 +150,32 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
                 this.setFlipX(false);
             }
             if (grizzlyTile.y == targetTile.y) {
-                this.anims.play('grizzly-walk-W-anim', true);
+                this.anims.play('grizzly-walk-e-anim', true);
             } else {
                 if (this.y <= this.target!.y) {
-                    console.log(this.y, this.target!.y, 'S');
-                    this.anims.play('grizzly-walk-S-anim', true);
+                    this.anims.play('grizzly-walk-s-anim', true);
                 } else {
-                    console.log(grizzlyTile.y, targetTile.y, 'N');
-                    this.anims.play('grizzly-walk-N-anim', true);
+                    this.anims.play('grizzly-walk-n-anim', true);
                 }
             }
         }
     }
 
-    kill() {}
+    freeze() {
+        if (this.enemyState == State.DEAD) {
+            return;
+        }
+        this.enemyState = State.FREEZE;
+        (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
+    }
+
+    kill() {
+        if (this.enemyState == State.DEAD) {
+            return;
+        }
+        this.enemyState = State.DEAD;
+        this.anims.play('grizzly-die-anim', true);
+        (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
+        this.scene.physics.world.removeCollider(this.heroCollider);
+    }
 }
