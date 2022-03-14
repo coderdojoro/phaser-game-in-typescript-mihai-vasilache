@@ -132,18 +132,18 @@
                  "id":287,
                  "name":"store",
                  "rotation":0,
-                 "type":"",
+                 "type":"AREA",
                  "visible":true,
                  "width":31.8181818181818,
-                 "x":437,
-                 "y":1127.90909090909
+                 "x":607,
+                 "y":1124.90909090909
                 }, 
                 {
                  "height":141.772727272727,
                  "id":288,
                  "name":"house1",
                  "rotation":0,
-                 "type":"",
+                 "type":"AREA",
                  "visible":true,
                  "width":127.636363636364,
                  "x":224.151515151515,
@@ -165,7 +165,7 @@
          "value":"clamped"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.8.1",
+ "tiledversion":"1.8.2",
  "tileheight":32,
  "tilesets":[
         {

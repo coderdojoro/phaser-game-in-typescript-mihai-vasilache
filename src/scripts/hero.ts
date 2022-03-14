@@ -1,5 +1,6 @@
 import 'phaser';
 import Grizzly from './grizzly';
+import MainMenuScene, { AreaCollision } from './scenes/mainMenuScene';
 
 enum HeroPosition {
     WEST,
@@ -28,6 +29,14 @@ export default class Hero extends Phaser.GameObjects.Sprite {
 
     constructor(scene, x, y) {
         super(scene, x, y, 'hero-walk-S-spritesheet', 0);
+
+        this.on(AreaCollision[AreaCollision.ENTER_AREA], (areaName) => {
+            console.log('Enter area ' + areaName);
+        });
+
+        this.on(AreaCollision[AreaCollision.EXIT_AREA], (areaName) => {
+            console.log('Exit area ' + areaName);
+        });
 
         this.anims.create({
             key: 'hero-idle-e-anim',
