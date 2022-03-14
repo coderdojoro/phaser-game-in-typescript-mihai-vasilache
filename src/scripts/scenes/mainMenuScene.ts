@@ -7,6 +7,8 @@ export default class MainMenuScene extends Phaser.Scene {
     worldLayer: Phaser.Tilemaps.TilemapLayer;
     hero: Hero;
 
+    house1Zone: Phaser.GameObjects.Zone;
+
     constructor() {
         super({ key: 'MainMenuScene' });
     }
@@ -75,8 +77,24 @@ export default class MainMenuScene extends Phaser.Scene {
         // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
         // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
         let spawnPoint: Phaser.Types.Tilemaps.TiledObject = this.map.findObject('Objects', (obj) => obj.name === 'Spawn Point');
+
         this.hero = new Hero(this, spawnPoint.x, spawnPoint.y);
         this.hero.setDepth(100);
+
+        let house1Entry: Phaser.Types.Tilemaps.TiledObject = this.map.findObject('Objects', (obj) => obj.name === 'house1');
+        console.log(house1Entry);
+
+        this.house1Zone = this.add.zone(house1Entry.x!, house1Entry.y!, house1Entry.width!, house1Entry.height!);
+        this.house1Zone.setOrigin(0, 0);
+        this.physics.world.enable(this.house1Zone, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        (this.house1Zone.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+        (this.house1Zone.body as Phaser.Physics.Arcade.Body).moves = false;
+
+        this.physics.add.overlap(this.hero, this.house1Zone);
+
+        // this.house1Zone.on('ENTER_ZONE', () => console.log('ENTER_ZONE'));
+        // this.house1Zone.on('LEAVE_ZONE', () => console.log('LEAVE_ZONE'));
+        (this.house1Zone.body as Phaser.Physics.Arcade.Body).debugBodyColor = 0xffffff;
 
         let grizzlyObjects: Phaser.Types.Tilemaps.TiledObject[] = this.map.getObjectLayer('Objects').objects.filter((obj) => obj.name == 'grizzly');
         for (let grizzlyObject of grizzlyObjects) {
@@ -95,5 +113,17 @@ export default class MainMenuScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     }
 
-    update(time, delta) {}
+    update(time, delta) {
+        var touching: Phaser.Types.Physics.Arcade.ArcadeBodyCollision = (this.house1Zone.body as Phaser.Physics.Arcade.Body).touching;
+        var wasTouching: Phaser.Types.Physics.Arcade.ArcadeBodyCollision = (this.house1Zone.body as Phaser.Physics.Arcade.Body).wasTouching;
+        var embeded: boolean = (this.house1Zone.body as Phaser.Physics.Arcade.Body).embedded;
+
+        console.log(wasTouching.none);
+
+        if (touching.none && !wasTouching.none) {
+            this.house1Zone.emit('LEAVE_ZONE');
+        } else if (!touching.none && wasTouching.none) {
+            this.house1Zone.emit('ENTER_ZONE');
+        }
+    }
 }
