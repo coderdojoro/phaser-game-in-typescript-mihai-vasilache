@@ -1,7 +1,7 @@
 import 'phaser';
 import * as EasyStar from 'easystarjs';
 import Hero from './hero';
-import MainMenuScene from './scenes/mainMenuScene';
+import GameScene from './scenes/gameScene';
 
 enum State {
     IDLE,
@@ -62,17 +62,17 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         });
 
         this.heroCollider = this.scene.physics.world.addOverlap(
-            (this.scene as MainMenuScene).hero,
+            (this.scene as GameScene).hero,
             this,
             () => {
-                (this.scene as MainMenuScene).hero.kill();
+                (this.scene as GameScene).hero.kill();
             },
             undefined,
             this
         );
 
         this.easystar = new EasyStar.js();
-        this.easystar.setGrid((this.scene as MainMenuScene).worldLayer.layer.data.map((arr) => arr.map((tile) => tile.index)));
+        this.easystar.setGrid((this.scene as GameScene).worldLayer.layer.data.map((arr) => arr.map((tile) => tile.index)));
         this.easystar.setAcceptableTiles(-1);
         this.easystar.enableDiagonals();
         this.easystar.enableCornerCutting();
@@ -85,7 +85,7 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, (this.scene as MainMenuScene).hero.x, (this.scene as MainMenuScene).hero.y);
+        let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, (this.scene as GameScene).hero.x, (this.scene as GameScene).hero.y);
         if (distanceFromPlayer <= 300 && !this.target) {
             this.computeNextTarget();
         }
@@ -109,13 +109,13 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
     computeNextTarget() {
         this.easystar.findPath(
-            (this.scene as MainMenuScene).map.worldToTileX(this.x),
-            (this.scene as MainMenuScene).map.worldToTileY(this.y),
-            (this.scene as MainMenuScene).map.worldToTileX((this.scene as MainMenuScene).hero.x),
-            (this.scene as MainMenuScene).map.worldToTileY((this.scene as MainMenuScene).hero.y),
+            (this.scene as GameScene).map.worldToTileX(this.x),
+            (this.scene as GameScene).map.worldToTileY(this.y),
+            (this.scene as GameScene).map.worldToTileX((this.scene as GameScene).hero.x),
+            (this.scene as GameScene).map.worldToTileY((this.scene as GameScene).hero.y),
             (path) => {
                 if (path.length == 0) {
-                    this.target = new Phaser.Math.Vector2((this.scene as MainMenuScene).hero.x, (this.scene as MainMenuScene).hero.y);
+                    this.target = new Phaser.Math.Vector2((this.scene as GameScene).hero.x, (this.scene as GameScene).hero.y);
                     this.enemyState = State.FOLLOW;
                     this.setWalkAnimation();
                     return;
@@ -126,8 +126,8 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
                     return;
                 }
                 this.target = new Phaser.Math.Vector2(
-                    (this.scene as MainMenuScene).map.tileToWorldX(path[1].x) + 16,
-                    (this.scene as MainMenuScene).map.tileToWorldY(path[1].y) + 16
+                    (this.scene as GameScene).map.tileToWorldX(path[1].x) + 16,
+                    (this.scene as GameScene).map.tileToWorldY(path[1].y) + 16
                 );
                 this.enemyState = State.FOLLOW;
                 this.setWalkAnimation();
@@ -142,8 +142,8 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
     setWalkAnimation() {
         if (this.enemyState == State.FOLLOW) {
-            let grizzlyTile = (this.scene as MainMenuScene).map.worldToTileXY(this.x, this.y);
-            let targetTile = (this.scene as MainMenuScene).map.worldToTileXY(this.target!.x, this.target!.y);
+            let grizzlyTile = (this.scene as GameScene).map.worldToTileXY(this.x, this.y);
+            let targetTile = (this.scene as GameScene).map.worldToTileXY(this.target!.x, this.target!.y);
             if (grizzlyTile.x < targetTile.x) {
                 this.setFlipX(true);
             } else {

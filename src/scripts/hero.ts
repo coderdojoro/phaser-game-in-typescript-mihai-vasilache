@@ -1,6 +1,6 @@
 import 'phaser';
 import Grizzly from './grizzly';
-import MainMenuScene, { AreaCollision } from './scenes/mainMenuScene';
+import GameScene, { AreaCollision } from './scenes/gameScene';
 
 enum HeroPosition {
     WEST,

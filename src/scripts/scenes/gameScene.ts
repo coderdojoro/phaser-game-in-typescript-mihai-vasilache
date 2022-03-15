@@ -7,7 +7,7 @@ export enum AreaCollision {
     EXIT_AREA
 }
 
-export default class MainMenuScene extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
     map: Phaser.Tilemaps.Tilemap;
     worldLayer: Phaser.Tilemaps.TilemapLayer;
     hero: Hero;

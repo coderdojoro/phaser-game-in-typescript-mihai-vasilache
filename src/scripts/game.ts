@@ -1,6 +1,7 @@
 import 'phaser';
 
-import MainMenuScene from './scenes/mainMenuScene';
+import GameScene from './scenes/gameScene';
+import MenuScene from './scenes/menuScene';
 
 export const phaserConfiguration = {
     type: Phaser.AUTO,
@@ -16,7 +17,7 @@ export const phaserConfiguration = {
         antialiasGL: false,
         pixelArt: true
     },
-    scene: [MainMenuScene],
+    scene: [MenuScene, GameScene],
     physics: {
         default: 'arcade',
         arcade: {
