@@ -17,6 +17,8 @@ export default class House1GroundFloorScene extends Phaser.Scene {
         this.load.image('interior-tileset2', 'assets/tilesets/interior-tileset2.png');
         this.load.image('interior-bathroom-tileset', 'assets/tilesets/interior-bathroom.png');
 
+        this.load.spritesheet('dorothy-spritesheet', 'assets/characters/dorothy.png', { frameWidth: 29, frameHeight: 33 });
+
         this.load.tilemapTiledJSON('house1GroundFloor', 'assets/tilemaps/house1GroundFloor.json');
     }
 
@@ -55,6 +57,18 @@ export default class House1GroundFloorScene extends Phaser.Scene {
 
         this.physics.add.collider(this.hero, worldLayer);
         this.physics.world.setBoundsCollision(true, true, true, true);
+
+        this.anims.create({
+            key: 'dorothy-anim',
+            frames: this.anims.generateFrameNumbers('dorothy-spritesheet', {}),
+            frameRate: 7,
+            repeat: -1
+        });
+        let dorothySpawnPoint: Phaser.Types.Tilemaps.TiledObject = map.findObject('Objects', (obj) => obj.name === 'dorothy');
+        let object = this.physics.add.sprite(dorothySpawnPoint.x! + layerOffsetX, dorothySpawnPoint.y! + layerOffsetY, 'dorothy-spritesheet', 0);
+        object.setOrigin(0, 1);
+        object.anims.play('dorothy-anim');
+        object.body.immovable = true;
 
         let camera = this.cameras.main;
         //camera.startFollow(this.hero);
