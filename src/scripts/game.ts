@@ -1,6 +1,9 @@
 import 'phaser';
 
 import GameScene from './scenes/gameScene';
+import House1FirstFloorScene from './scenes/house1FirstFloorScene';
+import House1GroundFloorScene from './scenes/house1GroundFloorScene';
+import House1Scene from './scenes/house1GroundFloorScene';
 import MenuScene from './scenes/menuScene';
 
 export const phaserConfiguration = {
@@ -17,7 +20,7 @@ export const phaserConfiguration = {
         antialiasGL: false,
         pixelArt: true
     },
-    scene: [MenuScene, GameScene],
+    scene: [MenuScene, GameScene, House1GroundFloorScene, House1FirstFloorScene],
     physics: {
         default: 'arcade',
         arcade: {

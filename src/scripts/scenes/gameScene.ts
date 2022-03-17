@@ -1,6 +1,7 @@
 import 'phaser';
-import Grizzly from '../grizzly';
-import Hero from '../hero';
+import Grizzly from '../sprites/grizzly';
+import AreaCollier from '../../areaCollider';
+import Hero from '../sprites/hero';
 
 export enum AreaCollision {
     ENTER_AREA,
@@ -12,12 +13,11 @@ export default class GameScene extends Phaser.Scene {
     worldLayer: Phaser.Tilemaps.TilemapLayer;
     hero: Hero;
 
-    heroArea: String | null = null;
-
+    areaCollider: AreaCollier = new AreaCollier(this, null);
     areaObjects: Array<Phaser.Types.Tilemaps.TiledObject>;
 
     constructor() {
-        super({ key: 'MainMenuScene' });
+        super({ key: 'GameScene' });
     }
 
     preload() {
@@ -46,19 +46,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        // remove the loading screen
-        let loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.classList.add('transparent');
-            this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    // @ts-ignore
-                    loadingScreen.remove();
-                }
-            });
-        }
-
         this.cameras.main.fadeIn(2000);
         this.cameras.main.setBackgroundColor('#008080');
 
@@ -100,7 +87,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.physics.world.setBoundsCollision(true, true, true, true);
 
-        const camera = this.cameras.main;
+        let camera = this.cameras.main;
         camera.startFollow(this.hero);
         camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         camera.setZoom(1);
@@ -108,35 +95,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        for (let area of this.areaObjects) {
-            //debug:
-            // let rectangle = this.add.rectangle(area.x!, area.y!, area.width!, area.height!);
-            // rectangle.setStrokeStyle(1, 0xff0000, 1);
-            // rectangle.setOrigin(0, 0);
-
-            let entities: Array<Phaser.Physics.Arcade.Body> = this.physics.overlapRect(
-                area.x!,
-                area.y!,
-                area.width!,
-                area.height!,
-                true,
-                false
-            ) as Array<Phaser.Physics.Arcade.Body>;
-
-            let heroesInArea = entities.filter((entity) => entity.gameObject instanceof Hero);
-            let inArea = true;
-            if (heroesInArea.length == 0) {
-                inArea = false;
-            }
-
-            if (inArea == true && (this.heroArea == null || this.heroArea != area.name)) {
-                this.hero.emit(AreaCollision[AreaCollision.ENTER_AREA], area.name);
-                this.heroArea = area.name;
-            }
-            if (!inArea && this.heroArea == area.name) {
-                this.hero.emit(AreaCollision[AreaCollision.EXIT_AREA], area.name);
-                this.heroArea = null;
-            }
-        }
+        this.areaCollider.update();
     }
 }
