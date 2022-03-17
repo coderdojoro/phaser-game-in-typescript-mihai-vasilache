@@ -18,9 +18,9 @@ export default class AreaCollier {
     update() {
         for (let area of this.scene.areaObjects) {
             //debug:
-            let rectangle = this.scene.add.rectangle(area.x!, area.y!, area.width!, area.height!);
-            rectangle.setStrokeStyle(1, 0xff0000, 1);
-            rectangle.setOrigin(0, 0);
+            // let rectangle = this.scene.add.rectangle(area.x!, area.y!, area.width!, area.height!);
+            // rectangle.setStrokeStyle(1, 0xff0000, 1);
+            // rectangle.setOrigin(0, 0);
 
             let entities: Array<Phaser.Physics.Arcade.Body> = this.scene.physics.overlapRect(
                 area.x!,

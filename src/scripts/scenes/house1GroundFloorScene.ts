@@ -10,7 +10,6 @@ export default class House1GroundFloorScene extends Phaser.Scene {
 
     constructor() {
         super({ key: 'House1GroundFloorScene' });
-        console.log('letructor');
     }
 
     preload() {

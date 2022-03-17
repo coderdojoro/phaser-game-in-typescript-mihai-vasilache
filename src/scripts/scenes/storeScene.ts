@@ -2,14 +2,14 @@ import 'phaser';
 import AreaCollier from '../../areaCollider';
 import Hero from '../sprites/hero';
 
-export default class House1FirstFloorScene extends Phaser.Scene {
+export default class StoreScene extends Phaser.Scene {
     hero: Hero;
 
-    areaCollider: AreaCollier = new AreaCollier(this, 'house1GroundFloor');
+    areaCollider: AreaCollier = new AreaCollier(this, 'game');
     areaObjects: Array<Phaser.Types.Tilemaps.TiledObject>;
 
     constructor() {
-        super({ key: 'House1FirstFloorScene' });
+        super({ key: 'StoreScene' });
     }
 
     preload() {
@@ -17,11 +17,11 @@ export default class House1FirstFloorScene extends Phaser.Scene {
         this.load.image('interior-tileset2', 'assets/tilesets/interior-tileset2.png');
         this.load.image('interior-bathroom-tileset', 'assets/tilesets/interior-bathroom.png');
 
-        this.load.tilemapTiledJSON('house1FirstFloor', 'assets/tilemaps/house1FirstFloor.json');
+        this.load.tilemapTiledJSON('store', 'assets/tilemaps/store.json');
     }
 
     create() {
-        let map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'house1FirstFloor' });
+        let map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'store' });
 
         let interiorTileset1 = map.addTilesetImage('interior1', 'interior-tileset1', 16, 16, 0, 0);
         let interiorTileset2 = map.addTilesetImage('interior2', 'interior-tileset2', 16, 16, 0, 0);
