@@ -14,13 +14,17 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
     enemyState: State = State.IDLE;
 
     easystar: EasyStar.js;
+
+    //in pixels (adjusted to +- 16 px to the middle of tile)
     target?: Phaser.Math.Vector2;
 
     heroCollider: Phaser.Physics.Arcade.Collider;
 
-    constructor(scene, x, y) {
-        super(scene, x, y, 'grizzly-idle-spritesheet', 0);
+    scene: GameScene;
 
+    constructor(scene: GameScene, x, y) {
+        super(scene, x, y, 'grizzly-idle-spritesheet', 0);
+        this.scene = scene;
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
         (this.body as Phaser.Physics.Arcade.Body).setSize(20, 31);
@@ -62,17 +66,17 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         });
 
         this.heroCollider = this.scene.physics.world.addOverlap(
-            (this.scene as GameScene).hero,
+            this.scene.hero,
             this,
             () => {
-                (this.scene as GameScene).hero.kill();
+                this.scene.hero.kill();
             },
             undefined,
             this
         );
 
         this.easystar = new EasyStar.js();
-        this.easystar.setGrid((this.scene as GameScene).worldLayer.layer.data.map((arr) => arr.map((tile) => tile.index)));
+        this.easystar.setGrid(this.scene.worldLayer.layer.data.map((arr) => arr.map((tile) => tile.index)));
         this.easystar.setAcceptableTiles(-1);
         this.easystar.enableDiagonals();
         this.easystar.enableCornerCutting();
@@ -85,7 +89,7 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, (this.scene as GameScene).hero.x, (this.scene as GameScene).hero.y);
+        let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, this.scene.hero.x, this.scene.hero.y);
         if (distanceFromPlayer <= 300 && !this.target) {
             this.computeNextTarget();
         }
@@ -105,14 +109,18 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         if (this.enemyState == State.IDLE) {
             this.anims.play('grizzly-idle-anim', true);
         }
+
+        if (this.enemyState == State.FOLLOW) {
+            this.setWalkAnimation();
+        }
     }
 
     computeNextTarget() {
         this.easystar.findPath(
-            (this.scene as GameScene).map.worldToTileX(this.x),
-            (this.scene as GameScene).map.worldToTileY(this.y),
-            (this.scene as GameScene).map.worldToTileX((this.scene as GameScene).hero.x),
-            (this.scene as GameScene).map.worldToTileY((this.scene as GameScene).hero.y),
+            this.scene.map.worldToTileX(this.x),
+            this.scene.map.worldToTileY(this.y),
+            this.scene.map.worldToTileX(this.scene.hero.x),
+            this.scene.map.worldToTileY(this.scene.hero.y),
             (path) => {
                 if (path == null) {
                     this.enemyState = State.IDLE;
@@ -120,14 +128,12 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
                     return;
                 }
                 if (path.length == 0) {
-                    this.target = new Phaser.Math.Vector2((this.scene as GameScene).hero.x, (this.scene as GameScene).hero.y);
+                    this.target = new Phaser.Math.Vector2(this.scene.hero.x, this.scene.hero.y);
                     this.enemyState = State.FOLLOW;
-                    this.setWalkAnimation();
                     return;
                 }
-                this.target = new Phaser.Math.Vector2((this.scene as GameScene).map.tileToWorldX(path[1].x) + 16, (this.scene as GameScene).map.tileToWorldY(path[1].y) + 16);
+                this.target = new Phaser.Math.Vector2(this.scene.map.tileToWorldX(path[1].x) + 16, this.scene.map.tileToWorldY(path[1].y) + 16);
                 this.enemyState = State.FOLLOW;
-                this.setWalkAnimation();
                 // for (let point of path) {
                 //     let worldXY = (this.scene as MainMenuScene).map.tileToWorldXY(point.x, point.y);
                 //     let circle = this.scene.add.circle(worldXY.x + 16, worldXY.y + 16, 5, 0xff0000);
@@ -139,21 +145,37 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
     setWalkAnimation() {
         if (this.enemyState == State.FOLLOW) {
-            let grizzlyTile = (this.scene as GameScene).map.worldToTileXY(this.x, this.y);
-            let targetTile = (this.scene as GameScene).map.worldToTileXY(this.target!.x, this.target!.y);
-            if (grizzlyTile.x < targetTile.x) {
-                this.setFlipX(true);
-            } else {
-                this.setFlipX(false);
+            let velocityRadiansAngle = (this.body as Phaser.Physics.Arcade.Body).velocity.angle();
+            let velocityDegreeAngle = (velocityRadiansAngle * 180) / Math.PI;
+
+            let direction: string = 'err';
+            if (velocityDegreeAngle >= 315 || velocityDegreeAngle <= 45) {
+                direction = 'e';
             }
-            if (grizzlyTile.y == targetTile.y) {
-                this.anims.play('grizzly-walk-e-anim', true);
+            if (135 <= velocityDegreeAngle && velocityDegreeAngle <= 225) {
+                direction = 'w';
+            }
+            if (45 < velocityDegreeAngle && velocityDegreeAngle < 135) {
+                direction = 's';
+            }
+            if (225 < velocityDegreeAngle && velocityDegreeAngle < 315) {
+                direction = 'n';
+            }
+
+            if (direction == 'e') {
+                this.setFlipX(false);
             } else {
-                if (this.y <= this.target!.y) {
-                    this.anims.play('grizzly-walk-s-anim', true);
-                } else {
-                    this.anims.play('grizzly-walk-n-anim', true);
-                }
+                this.setFlipX(true);
+            }
+
+            if (direction == 'e' || direction == 'w') {
+                this.anims.play('grizzly-walk-e-anim', true);
+            }
+            if (direction == 's') {
+                this.anims.play('grizzly-walk-s-anim', true);
+            }
+            if (direction == 'n') {
+                this.anims.play('grizzly-walk-n-anim', true);
             }
         }
     }
