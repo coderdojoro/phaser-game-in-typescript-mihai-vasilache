@@ -22,6 +22,8 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
     scene: GameScene;
 
+    debugCircles: Phaser.GameObjects.Arc[] = new Array();
+
     constructor(scene: GameScene, x, y) {
         super(scene, x, y, 'grizzly-idle-spritesheet', 0);
         this.scene = scene;
@@ -89,29 +91,26 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, this.scene.hero.x, this.scene.hero.y);
-        if (distanceFromPlayer <= 300 && !this.target) {
-            this.computeNextTarget();
-        }
-
-        if (this.target) {
-            let distanceFromTarget = Phaser.Math.Distance.Between(this.target.x, this.target.y, this.x, this.y);
-            //console.log('distance: ' + distanceFromTarget);
-            if (distanceFromTarget < 3) {
+        if (this.enemyState == State.IDLE) {
+            let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, this.scene.hero.x, this.scene.hero.y);
+            if (distanceFromPlayer <= 300 && !this.target) {
                 this.computeNextTarget();
             }
         }
 
-        if (this.target) {
-            this.scene.physics.moveTo(this, this.target.x, this.target.y, 100);
+        if (this.enemyState == State.FOLLOW) {
+            let distanceFromTarget = Phaser.Math.Distance.Between(this.target!.x, this.target!.y, this.x, this.y);
+            console.log('distance: ' + distanceFromTarget);
+            if (distanceFromTarget < 2) {
+                this.computeNextTarget();
+            }
+
+            this.scene.physics.moveTo(this, this.target!.x, this.target!.y, 100);
+            this.setWalkAnimation();
         }
 
         if (this.enemyState == State.IDLE) {
             this.anims.play('grizzly-idle-anim', true);
-        }
-
-        if (this.enemyState == State.FOLLOW) {
-            this.setWalkAnimation();
         }
     }
 
@@ -122,22 +121,32 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             this.scene.map.worldToTileX(this.scene.hero.x),
             this.scene.map.worldToTileY(this.scene.hero.y),
             (path) => {
+                if (path !== null) {
+                    console.log('Path length: ' + path.length);
+                }
                 if (path == null) {
                     this.enemyState = State.IDLE;
                     this.target = undefined;
                     return;
                 }
-                if (path.length == 0) {
+                // path contains the player and the grizzly tiles: 2 should means that there is nothing between them
+                if (path.length <= 2) {
                     this.target = new Phaser.Math.Vector2(this.scene.hero.x, this.scene.hero.y);
                     this.enemyState = State.FOLLOW;
                     return;
                 }
+
                 this.target = new Phaser.Math.Vector2(this.scene.map.tileToWorldX(path[1].x) + 16, this.scene.map.tileToWorldY(path[1].y) + 16);
                 this.enemyState = State.FOLLOW;
-                // for (let point of path) {
-                //     let worldXY = (this.scene as MainMenuScene).map.tileToWorldXY(point.x, point.y);
-                //     let circle = this.scene.add.circle(worldXY.x + 16, worldXY.y + 16, 5, 0xff0000);
-                // }
+                for (let circle of this.debugCircles) {
+                    circle.destroy();
+                }
+                this.debugCircles = [];
+                for (let point of path) {
+                    let worldXY = this.scene.map.tileToWorldXY(point.x, point.y);
+                    let circle = this.scene.add.circle(worldXY.x + 16, worldXY.y + 16, 5, 0xff0000);
+                    this.debugCircles.push(circle);
+                }
             }
         );
         this.easystar.calculate();

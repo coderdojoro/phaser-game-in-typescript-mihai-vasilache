@@ -68,6 +68,14 @@ export default class GameScene extends Phaser.Scene {
         // Higher depths will sit on top of lower depth objects.
         aboveLayer.setDepth(200);
 
+        belowLayer.layer.data.forEach((arr) => {
+            arr.forEach((tile) => {
+                let rectangle = this.add.rectangle(tile.pixelX, tile.pixelY, 32, 32);
+                rectangle.setStrokeStyle(1, 0xff0000, 1);
+                rectangle.setOrigin(0, 0);
+            });
+        });
+
         // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
         // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
         let spawnPoint: Phaser.Types.Tilemaps.TiledObject = this.map.findObject('Objects', (obj) => obj.name === 'Spawn Point');
