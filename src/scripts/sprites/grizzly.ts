@@ -121,12 +121,8 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
             this.scene.map.worldToTileX(this.scene.hero.x),
             this.scene.map.worldToTileY(this.scene.hero.y),
             (path) => {
-                if (path !== null) {
-                    console.log('Path length: ' + path.length);
-                }
                 if (path == null) {
                     this.enemyState = State.IDLE;
-                    this.target = undefined;
                     return;
                 }
                 // path contains the player and the grizzly tiles: 2 should means that there is nothing between them
@@ -138,15 +134,15 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
                 this.target = new Phaser.Math.Vector2(this.scene.map.tileToWorldX(path[1].x) + 16, this.scene.map.tileToWorldY(path[1].y) + 16);
                 this.enemyState = State.FOLLOW;
-                for (let circle of this.debugCircles) {
-                    circle.destroy();
-                }
-                this.debugCircles = [];
-                for (let point of path) {
-                    let worldXY = this.scene.map.tileToWorldXY(point.x, point.y);
-                    let circle = this.scene.add.circle(worldXY.x + 16, worldXY.y + 16, 5, 0xff0000);
-                    this.debugCircles.push(circle);
-                }
+                // for (let circle of this.debugCircles) {
+                //     circle.destroy();
+                // }
+                // this.debugCircles = [];
+                // for (let point of path) {
+                //     let worldXY = this.scene.map.tileToWorldXY(point.x, point.y);
+                //     let circle = this.scene.add.circle(worldXY.x + 16, worldXY.y + 16, 5, 0xff0000);
+                //     this.debugCircles.push(circle);
+                // }
             }
         );
         this.easystar.calculate();
