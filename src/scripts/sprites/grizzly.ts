@@ -100,7 +100,7 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
         if (this.enemyState == State.FOLLOW) {
             let distanceFromTarget = Phaser.Math.Distance.Between(this.target!.x, this.target!.y, this.x, this.y);
-            console.log('distance: ' + distanceFromTarget);
+            // console.log('distance: ' + distanceFromTarget);
             if (distanceFromTarget < 2) {
                 this.computeNextTarget();
             }
@@ -134,6 +134,7 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
 
                 this.target = new Phaser.Math.Vector2(this.scene.map.tileToWorldX(path[1].x) + 16, this.scene.map.tileToWorldY(path[1].y) + 16);
                 this.enemyState = State.FOLLOW;
+                // display computed path With red bullets:
                 // for (let circle of this.debugCircles) {
                 //     circle.destroy();
                 // }
@@ -201,5 +202,9 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         this.anims.play('grizzly-die-anim', true);
         (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
         this.scene.physics.world.removeCollider(this.heroCollider);
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.setActive(false);
+        });
+        this.scene.time.delayedCall(30 * 1000, () => this.destroy(), [], this);
     }
 }

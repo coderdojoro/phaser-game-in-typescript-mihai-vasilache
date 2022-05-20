@@ -5,6 +5,10 @@
         }
     ],
     "settings": {
+        "workbench.localHistory.enabled": true,
+        "workbench.localHistory.maxFileEntries": 10000,
+        "workbench.localHistory.maxFileSize": 15000,
+        "workbench.localHistory.mergeWindow": 10, //(seconds) - for autosave zero adds to much entries
         "terminal.integrated.windowsEnableConpty": false,
         "editor.wordBasedSuggestions": false,
         "git.postCommitCommand": "push",
