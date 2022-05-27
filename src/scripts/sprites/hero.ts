@@ -1,5 +1,4 @@
 import 'phaser';
-import { AreaCollision } from '../scenes/gameScene';
 import Grizzly from './grizzly';
 
 enum HeroPosition {
@@ -29,22 +28,38 @@ export default class Hero extends Phaser.GameObjects.Sprite {
 
     constructor(scene, x, y) {
         //Character is already centered in image and origin is the default (0.5, 05). Substract body size/2 from y to move spown point at the hero's foots
-        super(scene, x, y - 35 / 2, 'hero-walk-e-spritesheet', 0);
+        super(scene, x, y, 'hero-walk-e-spritesheet', 0);
+        // super(scene, x, y - 35 / 2, 'hero-walk-e-spritesheet', 0);
         // this.scene.add.rectangle(x, y, 5, 5, 0xff0000);
 
-        this.on(AreaCollision[AreaCollision.ENTER_AREA], (areaName) => {
-            console.log('Enter area ' + areaName);
-            let sceneName: string = areaName.charAt(0).toUpperCase() + areaName.slice(1) + 'Scene';
+        this.on('TELEPORT', (area) => {
+            console.log('Enter area ' + area.name);
+            let sceneName: string = area.name.charAt(0).toUpperCase() + area.name.slice(1) + 'Scene';
             console.log('Enter scene: ' + sceneName);
             this.scene.scene.sleep(this.scene); // no update, no render
             this.scene.scene.run(sceneName); //If the given Scene is paused, it will resume it. If sleeping, it will wake it. If not running at all, it will be started.
             this.scene.cameras.main.fadeOut(1000, 0, 0, 0);
-            console.log('Fade in: ' + this.scene.scene.get(sceneName).constructor.name);
-            this.scene.scene.get(sceneName).cameras.main.fadeIn();
-        });
+            // console.log('Fade in: ' + this.scene.scene.get(sceneName).constructor.name);
+            let newScene: any = this.scene.scene.get(sceneName);
+            newScene.cameras.main.fadeIn();
 
-        this.on(AreaCollision[AreaCollision.EXIT_AREA], (areaName) => {
-            console.log('Exit area ' + areaName);
+            newScene.events.on(Phaser.Scenes.Events.CREATE, () => {
+                let teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject> = newScene.teleportAreas;
+                for (let anArea of teleportAreas) {
+                    if (anArea.name == area.properties.find((p) => p.name == 'teleportTo').value) {
+                        this.teleportPlayer(anArea, newScene);
+                    }
+                }
+            });
+
+            newScene.events.on(Phaser.Scenes.Events.WAKE, () => {
+                let teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject> = newScene.teleportAreas;
+                for (let anArea of teleportAreas) {
+                    if (anArea.name == area.properties.find((p) => p.name == 'teleportTo').value) {
+                        this.teleportPlayer(anArea, newScene);
+                    }
+                }
+            });
         });
 
         this.anims.create({
@@ -134,18 +149,36 @@ export default class Hero extends Phaser.GameObjects.Sprite {
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
+        this.setOrigin(0.5, (49 + 35) / 128);
         (this.body as Phaser.Physics.Arcade.Body).setSize(15, 35);
         (this.body as Phaser.Physics.Arcade.Body).setOffset(57, 49);
+        console.log();
+
         (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
         //this.setScale(1.4);
     }
 
+    teleportPlayer(anArea, newScene) {
+        if ((anArea as any).properties.find((p) => p.name == 'exit').value == 'UP') {
+            newScene.hero.x = anArea.x! + anArea.width! / 2;
+            newScene.hero.y = anArea.y! - 5;
+            console.log('xy updated');
+            //(this.body as Phaser.Physics.Arcade.Body).updateFromGameObject();
+        }
+        if ((anArea as any).properties.find((p) => p.name == 'exit').value == 'DOWN') {
+            newScene.hero.x = anArea.x! + anArea.width! / 2;
+            newScene.hero.y = anArea.y! + anArea.height! + 5;
+            console.log('xy updated');
+            //(this.body as Phaser.Physics.Arcade.Body).updateFromGameObject();
+        }
+    }
+
     preUpdate(time, delta) {
+        // let circle = this.scene.add.circle(this.x, this.y, 3, 0xff0000);
         super.preUpdate(time, delta);
         (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
 
         if (this.heroState == HeroState.DEAD) {
-            (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
             return;
         }
 
@@ -178,7 +211,8 @@ export default class Hero extends Phaser.GameObjects.Sprite {
                 // rectangle.setOrigin(0, 0);
             }
             if (this.heroPosition == HeroPosition.SOUTH) {
-                enemies = this.scene.physics.overlapRect((this.body as Phaser.Physics.Arcade.Body).left - 11, (this.body as Phaser.Physics.Arcade.Body).bottom, 35, 45);
+                enemies = this.scene.physics.overlapRect(
+                    (this.body as Phaser.Physics.Arcade.Body).left - 11, (this.body as Phaser.Physics.Arcade.Body).bottom, 35, 45);
                 // let rectangle = this.scene.add.rectangle(
                 //     (this.body as Phaser.Physics.Arcade.Body).left - 11,
                 //     (this.body as Phaser.Physics.Arcade.Body).bottom,
@@ -209,6 +243,7 @@ export default class Hero extends Phaser.GameObjects.Sprite {
                 }
             }
 
+            //there is already one listener for returning to IDLE and want KILL to be registered only.once
             if (this.listenerCount(Phaser.Animations.Events.ANIMATION_COMPLETE) == 1) {
                 this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                     for (let enemy of this.killedEnemies) {
@@ -217,11 +252,9 @@ export default class Hero extends Phaser.GameObjects.Sprite {
                     this.killedEnemies = [];
                 });
             }
-        }
-
-        if (this.heroState == HeroState.ATTACK) {
             return;
         }
+
 
         // Update the animation last and give left/right animations precedence over up/down animations
         if (this.keyRight.isDown) {

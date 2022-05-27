@@ -68,23 +68,22 @@
          "name":"Objects",
          "objects":[
                 {
-                 "height":0,
-                 "id":275,
-                 "name":"Spawn Point",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":374.337121212117,
-                 "y":197.113636363637
-                }, 
-                {
-                 "height":16,
+                 "height":48.4667089410273,
                  "id":282,
                  "name":"house1GroundFloor",
+                 "properties":[
+                        {
+                         "name":"exit",
+                         "type":"string",
+                         "value":"DOWN"
+                        }, 
+                        {
+                         "name":"teleportTo",
+                         "type":"string",
+                         "value":"house1FirstFloor"
+                        }],
                  "rotation":0,
-                 "type":"AREA",
+                 "type":"TELEPORT_AREA",
                  "visible":true,
                  "width":73.3333333333333,
                  "x":338.484848484849,
@@ -106,7 +105,7 @@
          "value":"clamped"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.8.2",
+ "tiledversion":"1.8.1",
  "tileheight":16,
  "tilesets":[
         {

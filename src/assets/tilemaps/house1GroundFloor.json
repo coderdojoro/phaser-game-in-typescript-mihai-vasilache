@@ -68,34 +68,44 @@
          "name":"Objects",
          "objects":[
                 {
-                 "height":0,
-                 "id":275,
-                 "name":"Spawn Point",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":310.67045454545,
-                 "y":614.44696969697
-                }, 
-                {
                  "height":32,
                  "id":282,
                  "name":"game",
+                 "properties":[
+                        {
+                         "name":"exit",
+                         "type":"string",
+                         "value":"UP"
+                        }, 
+                        {
+                         "name":"teleportTo",
+                         "type":"string",
+                         "value":"house1GroundFloor"
+                        }],
                  "rotation":0,
-                 "type":"AREA",
+                 "type":"TELEPORT_AREA",
                  "visible":true,
                  "width":48,
                  "x":287.818181818182,
                  "y":592.181818181818
                 }, 
                 {
-                 "height":9.66666666666667,
+                 "height":39.6666666666667,
                  "id":285,
                  "name":"house1FirstFloor",
+                 "properties":[
+                        {
+                         "name":"exit",
+                         "type":"string",
+                         "value":"DOWN"
+                        }, 
+                        {
+                         "name":"teleportTo",
+                         "type":"string",
+                         "value":"house1GroundFloor"
+                        }],
                  "rotation":0,
-                 "type":"AREA",
+                 "type":"TELEPORT_AREA",
                  "visible":true,
                  "width":63.6666666666666,
                  "x":212.333333333333,
@@ -129,7 +139,7 @@
          "value":"clamped"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.8.2",
+ "tiledversion":"1.8.1",
  "tileheight":16,
  "tilesets":[
         {

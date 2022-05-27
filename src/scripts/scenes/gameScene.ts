@@ -1,20 +1,16 @@
 import 'phaser';
 import Grizzly from '../sprites/grizzly';
-import AreaCollier from '../../areaCollider';
+import AreaCollider from '../../areaCollider';
 import Hero from '../sprites/hero';
-
-export enum AreaCollision {
-    ENTER_AREA,
-    EXIT_AREA
-}
 
 export default class GameScene extends Phaser.Scene {
     map: Phaser.Tilemaps.Tilemap;
     worldLayer: Phaser.Tilemaps.TilemapLayer;
     hero: Hero;
 
-    areaCollider: AreaCollier = new AreaCollier(this, null);
-    areaObjects: Array<Phaser.Types.Tilemaps.TiledObject>;
+    teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject>;
+    layerOffsetX: number = 0;
+    layerOffsetY: number = 0;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -85,7 +81,7 @@ export default class GameScene extends Phaser.Scene {
         this.hero = new Hero(this, spawnPoint.x, spawnPoint.y);
         this.hero.setDepth(100);
 
-        this.areaObjects = this.map.filterObjects('Objects', (obj) => obj.type === 'AREA');
+        this.teleportAreas = this.map.filterObjects('Objects', (obj) => obj.type === 'TELEPORT_AREA');
 
         let grizzlyObjects: Phaser.Types.Tilemaps.TiledObject[] = this.map.getObjectLayer('Objects').objects.filter((obj) => obj.name == 'grizzly');
         for (let grizzlyObject of grizzlyObjects) {
@@ -105,6 +101,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        this.areaCollider.update();
+        AreaCollider.update(this);
     }
 }

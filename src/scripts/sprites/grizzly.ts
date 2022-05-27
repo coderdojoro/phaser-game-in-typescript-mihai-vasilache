@@ -150,39 +150,40 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
     }
 
     setWalkAnimation() {
-        if (this.enemyState == State.FOLLOW) {
-            let velocityRadiansAngle = (this.body as Phaser.Physics.Arcade.Body).velocity.angle();
-            let velocityDegreeAngle = (velocityRadiansAngle * 180) / Math.PI;
+        // if (this.enemyState != State.FOLLOW) {
+        //     return;
+        // }
+        let velocityRadiansAngle = (this.body as Phaser.Physics.Arcade.Body).velocity.angle();
+        let velocityDegreeAngle = (velocityRadiansAngle * 180) / Math.PI;
 
-            let direction: string = 'err';
-            if (velocityDegreeAngle >= 315 || velocityDegreeAngle <= 45) {
-                direction = 'e';
-            }
-            if (135 <= velocityDegreeAngle && velocityDegreeAngle <= 225) {
-                direction = 'w';
-            }
-            if (45 < velocityDegreeAngle && velocityDegreeAngle < 135) {
-                direction = 's';
-            }
-            if (225 < velocityDegreeAngle && velocityDegreeAngle < 315) {
-                direction = 'n';
-            }
+        let direction: string = 'err';
+        if (velocityDegreeAngle >= 315 || velocityDegreeAngle <= 45) {
+            direction = 'e';
+        }
+        if (135 <= velocityDegreeAngle && velocityDegreeAngle <= 225) {
+            direction = 'w';
+        }
+        if (45 < velocityDegreeAngle && velocityDegreeAngle < 135) {
+            direction = 's';
+        }
+        if (225 < velocityDegreeAngle && velocityDegreeAngle < 315) {
+            direction = 'n';
+        }
 
-            if (direction == 'e') {
-                this.setFlipX(false);
-            } else {
-                this.setFlipX(true);
-            }
+        if (direction == 'e') {
+            this.setFlipX(false);
+        } else {
+            this.setFlipX(true);
+        }
 
-            if (direction == 'e' || direction == 'w') {
-                this.anims.play('grizzly-walk-e-anim', true);
-            }
-            if (direction == 's') {
-                this.anims.play('grizzly-walk-s-anim', true);
-            }
-            if (direction == 'n') {
-                this.anims.play('grizzly-walk-n-anim', true);
-            }
+        if (direction == 'e' || direction == 'w') {
+            this.anims.play('grizzly-walk-e-anim', true);
+        }
+        if (direction == 's') {
+            this.anims.play('grizzly-walk-s-anim', true);
+        }
+        if (direction == 'n') {
+            this.anims.play('grizzly-walk-n-anim', true);
         }
     }
 

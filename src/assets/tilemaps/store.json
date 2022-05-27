@@ -68,23 +68,22 @@
          "name":"Objects",
          "objects":[
                 {
-                 "height":0,
-                 "id":275,
-                 "name":"Spawn Point",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":319.337121212117,
-                 "y":612.113636363637
-                }, 
-                {
                  "height":43,
                  "id":282,
                  "name":"game",
+                 "properties":[
+                        {
+                         "name":"exit",
+                         "type":"string",
+                         "value":"UP"
+                        }, 
+                        {
+                         "name":"teleportTo",
+                         "type":"string",
+                         "value":"store"
+                        }],
                  "rotation":0,
-                 "type":"AREA",
+                 "type":"TELEPORT_AREA",
                  "visible":true,
                  "width":62.3333333333333,
                  "x":288.484848484849,
@@ -106,7 +105,7 @@
          "value":"clamped"
         }],
  "renderorder":"right-down",
- "tiledversion":"1.8.2",
+ "tiledversion":"1.8.1",
  "tileheight":16,
  "tilesets":[
         {
