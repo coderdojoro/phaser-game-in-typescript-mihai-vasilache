@@ -32,36 +32,6 @@ export default class Hero extends Phaser.GameObjects.Sprite {
         // super(scene, x, y - 35 / 2, 'hero-walk-e-spritesheet', 0);
         // this.scene.add.rectangle(x, y, 5, 5, 0xff0000);
 
-        this.on('TELEPORT', (area) => {
-            console.log('Enter area ' + area.name);
-            let sceneName: string = area.name.charAt(0).toUpperCase() + area.name.slice(1) + 'Scene';
-            console.log('Enter scene: ' + sceneName);
-            this.scene.scene.sleep(this.scene); // no update, no render
-            this.scene.scene.run(sceneName); //If the given Scene is paused, it will resume it. If sleeping, it will wake it. If not running at all, it will be started.
-            this.scene.cameras.main.fadeOut(1000, 0, 0, 0);
-            // console.log('Fade in: ' + this.scene.scene.get(sceneName).constructor.name);
-            let newScene: any = this.scene.scene.get(sceneName);
-            newScene.cameras.main.fadeIn();
-
-            newScene.events.on(Phaser.Scenes.Events.CREATE, () => {
-                let teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject> = newScene.teleportAreas;
-                for (let anArea of teleportAreas) {
-                    if (anArea.name == area.properties.find((p) => p.name == 'teleportTo').value) {
-                        this.teleportPlayer(anArea, newScene);
-                    }
-                }
-            });
-
-            newScene.events.on(Phaser.Scenes.Events.WAKE, () => {
-                let teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject> = newScene.teleportAreas;
-                for (let anArea of teleportAreas) {
-                    if (anArea.name == area.properties.find((p) => p.name == 'teleportTo').value) {
-                        this.teleportPlayer(anArea, newScene);
-                    }
-                }
-            });
-        });
-
         this.anims.create({
             key: 'hero-idle-e-anim',
             frames: this.anims.generateFrameNumbers('hero-idle-e-spritesheet', {}),
@@ -156,21 +126,10 @@ export default class Hero extends Phaser.GameObjects.Sprite {
 
         (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
         //this.setScale(1.4);
-    }
 
-    teleportPlayer(anArea, newScene) {
-        if ((anArea as any).properties.find((p) => p.name == 'exit').value == 'UP') {
-            newScene.hero.x = anArea.x! + anArea.width! / 2;
-            newScene.hero.y = anArea.y! - 5;
-            console.log('xy updated');
-            //(this.body as Phaser.Physics.Arcade.Body).updateFromGameObject();
-        }
-        if ((anArea as any).properties.find((p) => p.name == 'exit').value == 'DOWN') {
-            newScene.hero.x = anArea.x! + anArea.width! / 2;
-            newScene.hero.y = anArea.y! + anArea.height! + 5;
-            console.log('xy updated');
-            //(this.body as Phaser.Physics.Arcade.Body).updateFromGameObject();
-        }
+        this.on('TELEPORT', (area) => {
+            
+        });
     }
 
     preUpdate(time, delta) {

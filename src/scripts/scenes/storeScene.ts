@@ -1,5 +1,5 @@
 import 'phaser';
-import AreaCollider from '../../areaCollider';
+import { AreaCollider } from '../../areaCollider';
 import Hero from '../sprites/hero';
 
 export default class StoreScene extends Phaser.Scene {

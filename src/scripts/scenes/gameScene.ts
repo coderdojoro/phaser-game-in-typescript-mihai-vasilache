@@ -1,6 +1,6 @@
 import 'phaser';
+import { AreaCollider } from '../../areaCollider';
 import Grizzly from '../sprites/grizzly';
-import AreaCollider from '../../areaCollider';
 import Hero from '../sprites/hero';
 
 export default class GameScene extends Phaser.Scene {
