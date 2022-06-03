@@ -132,6 +132,8 @@ export default class Hero extends Phaser.GameObjects.Sprite {
 
     preUpdate(time, delta) {
         // let circle = this.scene.add.circle(this.x, this.y, 3, 0xff0000);
+        // circle.setDepth(1000);
+
         super.preUpdate(time, delta);
         (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
 
