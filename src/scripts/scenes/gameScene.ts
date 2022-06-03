@@ -2,15 +2,11 @@ import 'phaser';
 import { AreaCollider } from '../../areaCollider';
 import Grizzly from '../sprites/grizzly';
 import Hero from '../sprites/hero';
+import TelportScene from './telportScene';
 
-export default class GameScene extends Phaser.Scene {
+export default class GameScene extends TelportScene {
     map: Phaser.Tilemaps.Tilemap;
     worldLayer: Phaser.Tilemaps.TilemapLayer;
-    hero: Hero;
-
-    teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject>;
-    layerOffsetX: number = 0;
-    layerOffsetY: number = 0;
 
     constructor() {
         super({ key: 'GameScene' });

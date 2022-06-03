@@ -1,14 +1,9 @@
 import 'phaser';
 import { AreaCollider } from '../../areaCollider';
+import TeleportScene from './telportScene';
 import Hero from '../sprites/hero';
 
-export default class House1GroundFloorScene extends Phaser.Scene {
-    hero: Hero;
-
-    teleportAreas: Array<Phaser.Types.Tilemaps.TiledObject>;
-    layerOffsetX: number;
-    layerOffsetY: number;
-
+export default class House1GroundFloorScene extends TeleportScene {
     constructor() {
         super({ key: 'House1GroundFloorScene' });
     }
@@ -30,14 +25,14 @@ export default class House1GroundFloorScene extends Phaser.Scene {
         let interiorTileset2 = map.addTilesetImage('interior2', 'interior-tileset2', 16, 16, 0, 0);
         let interiorBathroomTileset = map.addTilesetImage('bathroom', 'interior-bathroom-tileset', 16, 16, 0, 0);
 
-        this.layerOffsetX = this.cameras.main.worldView.x + this.cameras.main.width / 2 - map.widthInPixels / 2;
-        this.layerOffsetY = this.cameras.main.worldView.y + this.cameras.main.height / 2 - map.heightInPixels / 2;
+        let layerOffsetX = this.cameras.main.worldView.x + this.cameras.main.width / 2 - map.widthInPixels / 2;
+        let layerOffsetY = this.cameras.main.worldView.y + this.cameras.main.height / 2 - map.heightInPixels / 2;
 
-        let belowLayer = map.createLayer('Below hero', [interiorTileset1, interiorTileset2, interiorBathroomTileset], this.layerOffsetX, this.layerOffsetY);
-        let objectsBelowLayer = map.createLayer('Objects below hero', [interiorTileset1, interiorTileset2, interiorBathroomTileset], this.layerOffsetX, this.layerOffsetY);
-        let worldLayer = map.createLayer('World', [interiorTileset1, interiorTileset2, interiorBathroomTileset], this.layerOffsetX, this.layerOffsetY);
-        let aboveWorldLayer = map.createLayer('Objects above world', [interiorTileset1, interiorTileset2, interiorBathroomTileset], this.layerOffsetX, this.layerOffsetY);
-        let aboveLayer = map.createLayer('Above hero', [interiorTileset1, interiorTileset2, interiorBathroomTileset], this.layerOffsetX, this.layerOffsetY);
+        let belowLayer = map.createLayer('Below hero', [interiorTileset1, interiorTileset2, interiorBathroomTileset], layerOffsetX, layerOffsetY);
+        let objectsBelowLayer = map.createLayer('Objects below hero', [interiorTileset1, interiorTileset2, interiorBathroomTileset], layerOffsetX, layerOffsetY);
+        let worldLayer = map.createLayer('World', [interiorTileset1, interiorTileset2, interiorBathroomTileset], layerOffsetX, layerOffsetY);
+        let aboveWorldLayer = map.createLayer('Objects above world', [interiorTileset1, interiorTileset2, interiorBathroomTileset], layerOffsetX, layerOffsetY);
+        let aboveLayer = map.createLayer('Above hero', [interiorTileset1, interiorTileset2, interiorBathroomTileset], layerOffsetX, layerOffsetY);
 
         worldLayer.setCollisionBetween(interiorTileset1.firstgid, interiorTileset1.firstgid + interiorTileset1.total, true);
         worldLayer.setCollisionBetween(interiorTileset2.firstgid, interiorTileset2.firstgid + interiorTileset2.total, true);
@@ -50,8 +45,8 @@ export default class House1GroundFloorScene extends Phaser.Scene {
 
         this.teleportAreas = map.filterObjects('Objects', (obj) => obj.type === 'TELEPORT_AREA');
         for (let tiledObject of this.teleportAreas) {
-            tiledObject.x = tiledObject.x! + this.layerOffsetX;
-            tiledObject.y = tiledObject.y! + this.layerOffsetY;
+            tiledObject.x = tiledObject.x! + layerOffsetX;
+            tiledObject.y = tiledObject.y! + layerOffsetY;
         }
 
         this.physics.add.collider(this.hero, worldLayer);
@@ -64,7 +59,7 @@ export default class House1GroundFloorScene extends Phaser.Scene {
             repeat: -1
         });
         let dorothySpawnPoint: Phaser.Types.Tilemaps.TiledObject = map.findObject('Objects', (obj) => obj.name === 'dorothy');
-        let object = this.physics.add.sprite(dorothySpawnPoint.x! + this.layerOffsetX, dorothySpawnPoint.y! + this.layerOffsetY, 'dorothy-spritesheet', 0);
+        let object = this.physics.add.sprite(dorothySpawnPoint.x! + layerOffsetX, dorothySpawnPoint.y! + layerOffsetY, 'dorothy-spritesheet', 0);
         object.setOrigin(0, 1);
         object.anims.play('dorothy-anim');
         object.body.immovable = true;
@@ -73,7 +68,7 @@ export default class House1GroundFloorScene extends Phaser.Scene {
         //camera.startFollow(this.hero);
         //camera.setBounds(layerOffsetX, layerOffsetY, map.widthInPixels, map.heightInPixels);
         camera.setZoom(1);
-        this.physics.world.setBounds(this.layerOffsetX, this.layerOffsetY, map.widthInPixels, map.heightInPixels);
+        this.physics.world.setBounds(layerOffsetX, layerOffsetY, map.widthInPixels, map.heightInPixels);
     }
 
     update(time, delta) {
