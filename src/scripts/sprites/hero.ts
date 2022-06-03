@@ -127,9 +127,7 @@ export default class Hero extends Phaser.GameObjects.Sprite {
         (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
         //this.setScale(1.4);
 
-        this.on('TELEPORT', (area) => {
-            
-        });
+        this.on('TELEPORT', (area) => {});
     }
 
     preUpdate(time, delta) {
@@ -170,8 +168,7 @@ export default class Hero extends Phaser.GameObjects.Sprite {
                 // rectangle.setOrigin(0, 0);
             }
             if (this.heroPosition == HeroPosition.SOUTH) {
-                enemies = this.scene.physics.overlapRect(
-                    (this.body as Phaser.Physics.Arcade.Body).left - 11, (this.body as Phaser.Physics.Arcade.Body).bottom, 35, 45);
+                enemies = this.scene.physics.overlapRect((this.body as Phaser.Physics.Arcade.Body).left - 11, (this.body as Phaser.Physics.Arcade.Body).bottom, 35, 45);
                 // let rectangle = this.scene.add.rectangle(
                 //     (this.body as Phaser.Physics.Arcade.Body).left - 11,
                 //     (this.body as Phaser.Physics.Arcade.Body).bottom,
@@ -213,7 +210,6 @@ export default class Hero extends Phaser.GameObjects.Sprite {
             }
             return;
         }
-
 
         // Update the animation last and give left/right animations precedence over up/down animations
         if (this.keyRight.isDown) {
