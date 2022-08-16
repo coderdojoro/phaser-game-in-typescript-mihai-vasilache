@@ -53,7 +53,7 @@ export default class StoreScene extends TelportScene {
         let camera = this.cameras.main;
         //camera.startFollow(this.hero);
         //camera.setBounds(layerOffsetX, layerOffsetY, map.widthInPixels, map.heightInPixels);
-        camera.setZoom(1);
+        camera.setZoom(1.6);
         this.physics.world.setBounds(layerOffsetX, layerOffsetY, map.widthInPixels, map.heightInPixels);
     }
 

@@ -205,7 +205,7 @@ export default class Hero extends Phaser.GameObjects.Sprite {
             if (this.listenerCount(Phaser.Animations.Events.ANIMATION_COMPLETE) == 1) {
                 this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                     for (let enemy of this.killedEnemies) {
-                        enemy.kill();
+                        //enemy.kill();
                     }
                     this.killedEnemies = [];
                 });

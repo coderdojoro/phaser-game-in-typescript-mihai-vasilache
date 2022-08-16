@@ -13,6 +13,8 @@ export default class GameScene extends TelportScene {
     }
 
     preload() {
+        this.load.scenePlugin('FractalPlugin', 'assets/loader-tests/FractalScenePlugin.js', 'fractalPlugin', 'fractals');
+        
         this.load.image('tiles', 'assets/tilesets/ground-tileset.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/town.json');
 
@@ -92,7 +94,7 @@ export default class GameScene extends TelportScene {
         let camera = this.cameras.main;
         camera.startFollow(this.hero);
         camera.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        camera.setZoom(1);
+        camera.setZoom(1.6);
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     }
 
