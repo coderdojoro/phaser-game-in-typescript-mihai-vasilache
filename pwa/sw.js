@@ -13,7 +13,7 @@ self.__WB_DISABLE_DEV_LOGS = true;
 precacheAndRoute(self.__WB_MANIFEST);
 
 self.addEventListener('install', (evt) => {
-    console.log('PWA install...');
+    // console.log('PWA install...');
     //skip cache
     evt.skipWaiting();
     return;

@@ -2,7 +2,7 @@ import 'phaser';
 // import * as EasyStar from 'easystarjs';
 import Hero from './hero';
 import GameScene from '../scenes/gameScene';
-import { PhaserNavMesh, PhaserNavMeshPlugin } from 'phaser-navmesh/src';
+import { PhaserNavMesh, PhaserNavMeshPlugin } from 'phaser-navmesh';
 import { Tilemaps } from 'phaser';
 
 enum State {
@@ -19,7 +19,7 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
     navMesh: PhaserNavMesh;
 
     //in pixels (adjusted to +- 16 px to the middle of tile)
-    target?: Phaser.Math.Vector2;
+    target?: Phaser.Geom.Point;
 
     heroCollider: Phaser.Physics.Arcade.Collider;
 
@@ -86,31 +86,30 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         // this.easystar.enableDiagonals();
         // this.easystar.enableCornerCutting();
 
-        let plugin = this.scene.plugins.get('PhaserNavMeshPlugin') as PhaserNavMeshPlugin;
-        this.navMesh = plugin.buildMeshFromTilemap('mesh', this.scene.worldLayer.layer.tilemapLayer.tilemap);
+        this.navMesh = this.scene.navMeshPlugin.buildMeshFromTilemap('mesh', this.scene.map, [this.scene.worldLayer]);
     }
 
     preUpdate(time, delta) {
         super.preUpdate(time, delta);
-        console.log('State: ' + State[this.enemyState]);
+        //console.log('State: ' + State[this.enemyState]);
         if (this.enemyState == State.DEAD || this.enemyState == State.FREEZE) {
             return;
         }
 
         if (this.enemyState == State.IDLE) {
             let distanceFromPlayer = Phaser.Math.Distance.Between(this.x, this.y, this.scene.hero.x, this.scene.hero.y);
-            if (distanceFromPlayer <= 300 && !this.target) {
+            if (distanceFromPlayer <= 10300 && !this.target) {
                 this.computeNextTarget();
             }
         }
 
         if (this.enemyState == State.FOLLOW) {
             let distanceFromTarget = Phaser.Math.Distance.Between(this.target!.x, this.target!.y, this.x, this.y);
-            console.log('distancefrom target: ' + distanceFromTarget);
-            if (distanceFromTarget < 2) {
-                console.log('compyte netxt target...');
-                this.computeNextTarget();
-            }
+            //console.log('distancefrom target: ' + distanceFromTarget);
+            //if (distanceFromTarget < 2) {
+            //console.log('compyte netxt target...');
+            this.computeNextTarget();
+            //}
 
             this.scene.physics.moveTo(this, this.target!.x, this.target!.y, 100);
             this.setWalkAnimation();
@@ -128,22 +127,30 @@ export default class Grizzly extends Phaser.GameObjects.Sprite {
         //     this.scene.map.worldToTileX(this.scene.hero.x),
         //     this.scene.map.worldToTileY(this.scene.hero.y),
         //     (path) => {
-        let path = this.navMesh.findPath({ x: 0, y: 0 }, { x: 300, y: 400 });
+        let path: Phaser.Geom.Point[] = this.navMesh.findPath(
+            {
+                x: this.x,
+                y: this.y
+            },
+            {
+                x: this.scene.hero.x,
+                y: this.scene.hero.y
+            }
+        );
         if (path == null) {
-            console.log('enemy BLOCKED!!!!');
+            //console.log('enemy BLOCKED!!!!');
             this.enemyState = State.IDLE;
             return;
         }
         // path contains the player and the grizzly tiles: 2 should means that there is nothing between them
-        if (path.length <= 2) {
-            this.target = new Phaser.Math.Vector2(this.scene.hero.x, this.scene.hero.y);
-            console.log('Compute direct to player: ' + this.target.x + ', ' + this.target.y);
-            this.enemyState = State.FOLLOW;
-            return;
-        }
-
-        this.target = new Phaser.Math.Vector2(this.scene.map.tileToWorldX(path[1].x) + 16, this.scene.map.tileToWorldY(path[1].y) + 16);
-        console.log('Compute to tile: ' + this.target.x + ', ' + this.target.y);
+        // if (path.length <= 64) {
+        //     this.target = new Phaser.Math.Vector2(this.scene.hero.x, this.scene.hero.y);
+        //     console.log('Compute direct to player: ' + this.target.x + ', ' + this.target.y);
+        //     this.enemyState = State.FOLLOW;
+        //     return;
+        // }
+        this.target = path[1];
+        //console.log('Compute to tile: ' + this.target.x + ', ' + this.target.y);
         this.enemyState = State.FOLLOW;
         // display computed path With red bullets:
         // for (let circle of this.debugCircles) {

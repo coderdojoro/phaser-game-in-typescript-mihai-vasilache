@@ -6,16 +6,19 @@ import House1GroundFloorScene from './scenes/house1GroundFloorScene';
 import House1Scene from './scenes/house1GroundFloorScene';
 import MenuScene from './scenes/menuScene';
 import StoreScene from './scenes/storeScene';
-import { PhaserNavMeshPlugin } from 'phaser-navmesh/src';
+import { PhaserNavMeshPlugin } from 'phaser-navmesh';
+import VJoyPlugin from 'phaser3-vjoy-plugin';
+
 
 export const phaserConfiguration = {
     type: Phaser.AUTO,
     backgroundColor: '#008080',
     plugins: {
-        global: [
+        scene: [
             {
-                key: 'PhaserNavMeshPlugin',
-                plugin: PhaserNavMeshPlugin,
+                key: 'PhaserNavMeshPlugin', // Key to store the plugin class under in cache
+                plugin: PhaserNavMeshPlugin, // Class that constructs plugins
+                mapping: 'navMeshPlugin', // Property mapping to use for the scene, e.g. this.navMeshPlugin
                 start: true
             }
         ]

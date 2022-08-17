@@ -3,18 +3,18 @@ import { AreaCollider } from '../../areaCollider';
 import Grizzly from '../sprites/grizzly';
 import Hero from '../sprites/hero';
 import TelportScene from './telportScene';
+import { PhaserNavMeshPlugin } from 'phaser-navmesh';
 
 export default class GameScene extends TelportScene {
     map: Phaser.Tilemaps.Tilemap;
     worldLayer: Phaser.Tilemaps.TilemapLayer;
+    navMeshPlugin: PhaserNavMeshPlugin;
 
     constructor() {
         super({ key: 'GameScene' });
     }
 
     preload() {
-        this.load.scenePlugin('FractalPlugin', 'assets/loader-tests/FractalScenePlugin.js', 'fractalPlugin', 'fractals');
-        
         this.load.image('tiles', 'assets/tilesets/ground-tileset.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/town.json');
 
