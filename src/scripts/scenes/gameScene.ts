@@ -4,11 +4,13 @@ import Grizzly from '../sprites/grizzly';
 import Hero from '../sprites/hero';
 import TelportScene from './telportScene';
 import { PhaserNavMeshPlugin } from 'phaser-navmesh';
+import { VJoyPlugin } from 'phaser3-vjoy-plugin';
 
 export default class GameScene extends TelportScene {
     map: Phaser.Tilemaps.Tilemap;
     worldLayer: Phaser.Tilemaps.TilemapLayer;
     navMeshPlugin: PhaserNavMeshPlugin;
+    vjoy: VJoyPlugin;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -100,5 +102,6 @@ export default class GameScene extends TelportScene {
 
     update(time, delta) {
         AreaCollider.update(this);
+        //console.log(this.vjoy);
     }
 }

@@ -9,7 +9,6 @@ import StoreScene from './scenes/storeScene';
 import { PhaserNavMeshPlugin } from 'phaser-navmesh';
 import VJoyPlugin from 'phaser3-vjoy-plugin';
 
-
 export const phaserConfiguration = {
     type: Phaser.AUTO,
     backgroundColor: '#008080',
@@ -19,6 +18,12 @@ export const phaserConfiguration = {
                 key: 'PhaserNavMeshPlugin', // Key to store the plugin class under in cache
                 plugin: PhaserNavMeshPlugin, // Class that constructs plugins
                 mapping: 'navMeshPlugin', // Property mapping to use for the scene, e.g. this.navMeshPlugin
+                start: true
+            },
+            {
+                key: 'VJoyPlugin', // Key to store the plugin class under in cache
+                plugin: VJoyPlugin, // Class that constructs plugins
+                mapping: 'vjoy', // Property mapping to use for the scene, e.g. this.navMeshPlugin
                 start: true
             }
         ]

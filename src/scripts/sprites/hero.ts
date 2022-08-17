@@ -122,7 +122,7 @@ export default class Hero extends Phaser.GameObjects.Sprite {
         this.setOrigin(0.5, (49 + 35) / 128);
         (this.body as Phaser.Physics.Arcade.Body).setSize(15, 35);
         (this.body as Phaser.Physics.Arcade.Body).setOffset(57, 49);
-        console.log();
+        //console.log();
 
         (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
         //this.setScale(1.4);

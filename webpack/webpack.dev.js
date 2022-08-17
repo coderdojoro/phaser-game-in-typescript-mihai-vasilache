@@ -6,7 +6,8 @@ const dev = {
     devtool: 'eval-cheap-module-source-map',
     devServer: {
         open: true,
-        port: 8000
+        port: 8000,
+        open: true
     }
 };
 
